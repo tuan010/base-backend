@@ -4,13 +4,9 @@ import com.littlepig.controller.request.UserCreationRequest;
 import com.littlepig.controller.request.UserPasswordRequest;
 import com.littlepig.controller.request.UserUpdateRequest;
 import com.littlepig.controller.response.UserResponse;
-import com.littlepig.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.Min;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -19,11 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/user")
-@Tag(name = "User Controller")
-@RequiredArgsConstructor
-public class UserController {
-    private final UserService userService;
+@RequestMapping("/mockup/user")
+@Tag(name = "Mockup User Controller")
+public class MockupUserController {
     @Operation(summary = "Get user list", description = "API retrieve user from db")
     @GetMapping("/list")
     public Map<String, Object> getList(@RequestParam(required = false) String keyword,
@@ -81,16 +75,13 @@ public class UserController {
 
     @Operation(summary = "Create user", description = "API add new user to db")
     @PostMapping("/add")
-    public ResponseEntity<?> createUser(@RequestBody UserCreationRequest request){
-
-//        userService.save(request);
-
+    public Map<String, Object> createUser(@RequestBody UserCreationRequest request){
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("status", HttpStatus.CREATED.value());
         response.put("message", "user created successfully");
-        response.put("data", userService.save(request));
+        response.put("data", 3);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return response;
     }
 
 
