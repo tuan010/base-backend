@@ -1,5 +1,8 @@
 package com.littlepig.controller;
 
+import com.littlepig.controller.request.UserCreationRequest;
+import com.littlepig.controller.request.UserPasswordRequest;
+import com.littlepig.controller.request.UserUpdateRequest;
 import com.littlepig.controller.response.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.Min;
@@ -66,6 +69,51 @@ public class UserController {
         response.put("status", HttpStatus.OK.value());
         response.put("message", "user list");
         response.put("data", userResponse);
+        return response;
+    }
+
+    @Operation(summary = "Create user", description = "API add new user to db")
+    @PostMapping("/add")
+    public Map<String, Object> createUser(@RequestBody UserCreationRequest request){
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("status", HttpStatus.CREATED.value());
+        response.put("message", "user created successfully");
+        response.put("data", 3);
+
+        return response;
+    }
+
+
+    @Operation(summary = "Update user", description = "API update an user to db")
+    @PutMapping("/update")
+    public Map<String, Object> updateUser(@RequestBody UserUpdateRequest request){
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("status", HttpStatus.ACCEPTED.value());
+        response.put("message", "user updated successfully");
+        response.put("data", "");
+
+        return response;
+    }
+
+    @Operation(summary = "Update user password", description = "API update password an user to db")
+    @PatchMapping("/change-pwd")
+    public Map<String, Object> changePassword(@RequestBody UserPasswordRequest request){
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("status", HttpStatus.NO_CONTENT.value());
+        response.put("message", "Password changed successfully");
+        response.put("data", "");
+
+        return response;
+    }
+
+    @Operation(summary = "Inactivate user", description = "API inactivate user in database")
+    @DeleteMapping("/{userId}")
+    public Map<String, Object> deleteUser(@PathVariable Long userId){
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("status", HttpStatus.RESET_CONTENT.value());
+        response.put("message", "User deleted successfully");
+        response.put("data", "");
+
         return response;
     }
 }
