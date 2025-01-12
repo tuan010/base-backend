@@ -21,4 +21,6 @@ public interface UserService {
     Long save(UserCreationRequest request);
 
     void delete(Long id);
+
+    void update(UserUpdateRequest request);
 }

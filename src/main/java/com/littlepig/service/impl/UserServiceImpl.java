@@ -5,6 +5,7 @@ import com.littlepig.controller.request.UserCreationRequest;
 import com.littlepig.controller.request.UserPasswordRequest;
 import com.littlepig.controller.request.UserUpdateRequest;
 import com.littlepig.controller.response.UserResponse;
+import com.littlepig.exception.ResourceNotFoundException;
 import com.littlepig.model.AddressEntity;
 import com.littlepig.model.UserEntity;
 import com.littlepig.repository.AddressRepository;
@@ -12,10 +13,10 @@ import com.littlepig.repository.UserRepository;
 import com.littlepig.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<UserResponse> findAll() {
@@ -48,7 +50,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changePassword(UserPasswordRequest request) {
-
+        log.info("Changing password for user: {}", request);
+        // find user
+        UserEntity user = getUserEntityById(request.getId());
+        if(request.getPassword().equals(request.getConfirmPassword())){
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+        userRepository.save(user);
     }
 
     @Override
@@ -96,6 +104,62 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(Long id) {
+        log.info("Deleting user: {}", id);
+        UserEntity userEntity = getUserEntityById(id);
 
+        userEntity.setStatus(UserStatus.INACTIVE);
+
+        userRepository.save(userEntity);
+        log.info("Deleted user: {}", userEntity);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void update(UserUpdateRequest request) {
+        log.info("Updating user: {}", request);
+        //Get user by id
+       UserEntity userEntity =  getUserEntityById(request.getId());
+
+        // set data
+        userEntity.setFirstName(request.getFirstName());
+        userEntity.setLastName(request.getLastName());
+        userEntity.setUserName(request.getUserName());
+        userEntity.setGender(request.getGender());
+        userEntity.setBirthday(request.getBirthday());
+        userEntity.setEmail(request.getEmail());
+        userEntity.setPhone(request.getPhone());
+
+        userRepository.save(userEntity);
+
+        log.info("updated user: {}", request);
+
+        // save address
+        List<AddressEntity> addresses = new ArrayList<>();
+        request.getAddresses().forEach( addressRequest -> {
+            AddressEntity addressEntity = addressRepository.findByUserIdAndAddressType(userEntity.getId(),
+                    addressRequest.getAddressType());
+            if(addressEntity == null){
+                //insert new address
+                addressEntity = new AddressEntity();
+            }
+
+            //update existing address entity
+            addressEntity.setApartmentNumber(addressRequest.getApartmentNumber());
+            addressEntity.setFloor(addressRequest.getFloor());
+            addressEntity.setBuilding(addressRequest.getBuilding());
+            addressEntity.setStreetNumber(addressRequest.getStreetNumber());
+            addressEntity.setStreet(addressRequest.getStreet());
+            addressEntity.setCity(addressRequest.getCity());
+            addressEntity.setCountry(addressRequest.getCountry());
+            addressEntity.setAddressType(addressRequest.getAddressType());
+            addressEntity.setUserId(userEntity.getId());
+            addresses.add(addressEntity);
+        });
+        //save address list
+        addressRepository.saveAll(addresses);
+    }
+
+    private UserEntity getUserEntityById(Long id){
+        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }

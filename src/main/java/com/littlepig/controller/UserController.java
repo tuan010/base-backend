@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,8 @@ import java.util.Map;
 @RequestMapping("/user")
 @Tag(name = "User Controller")
 @RequiredArgsConstructor
+@Slf4j(topic = "USER-CONTROLLER")
+@ToString
 public class UserController {
     private final UserService userService;
     @Operation(summary = "Get user list", description = "API retrieve user from db")
@@ -97,10 +101,14 @@ public class UserController {
     @Operation(summary = "Update user", description = "API update an user to db")
     @PutMapping("/update")
     public Map<String, Object> updateUser(@RequestBody UserUpdateRequest request){
+        log.info("Update user: {}", request);
+        userService.update(request);
+        //get user after update
+        UserResponse userResponse = userService.findById(request.getId());
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("status", HttpStatus.ACCEPTED.value());
         response.put("message", "user updated successfully");
-        response.put("data", "");
+        response.put("data", userResponse);
 
         return response;
     }
@@ -108,6 +116,10 @@ public class UserController {
     @Operation(summary = "Update user password", description = "API update password an user to db")
     @PatchMapping("/change-pwd")
     public Map<String, Object> changePassword(@RequestBody UserPasswordRequest request){
+        log.info("Change password for user: {}", request);
+
+        userService.changePassword(request);
+
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("status", HttpStatus.NO_CONTENT.value());
         response.put("message", "Password changed successfully");
@@ -117,8 +129,12 @@ public class UserController {
     }
 
     @Operation(summary = "Inactivate user", description = "API inactivate user in database")
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("/del/{userId}")
     public Map<String, Object> deleteUser(@PathVariable Long userId){
+        log.info("Deleting user: {}", userId);
+
+        userService.delete(userId);
+
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("status", HttpStatus.RESET_CONTENT.value());
         response.put("message", "User deleted successfully");
