@@ -1,5 +1,6 @@
 package com.littlepig.controller;
 
+import com.littlepig.common.enums.Gender;
 import com.littlepig.controller.request.UserCreationRequest;
 import com.littlepig.controller.request.UserPasswordRequest;
 import com.littlepig.controller.request.UserUpdateRequest;
@@ -29,7 +30,7 @@ public class MockupUserController {
                    .firstName("tuan")
                    .lastName("nguyen")
                    .userName("tuan010")
-                   .gender("male")
+                   .gender(Gender.MALE)
                    .birthday(new Date())
                    .email("tuan888@dd.com")
                    .phone("098765522")
@@ -39,7 +40,7 @@ public class MockupUserController {
                    .firstName("trong")
                    .lastName("vu")
                    .userName("vdtdsds333")
-                   .gender("male")
+                   .gender(Gender.MALE)
                    .birthday(new Date())
                    .email("trong3133@dd.com")
                    .phone("098765522323")
@@ -61,7 +62,7 @@ public class MockupUserController {
                 .firstName("tuan")
                 .lastName("nguyen")
                 .userName("tuan010")
-                .gender("male")
+                .gender(Gender.MALE)
                 .birthday(new Date())
                 .email("tuan888@dd.com")
                 .phone("098765522")
