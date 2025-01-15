@@ -1,6 +1,5 @@
 package com.littlepig.controller;
 
-import com.littlepig.common.enums.Gender;
 import com.littlepig.controller.request.UserCreationRequest;
 import com.littlepig.controller.request.UserPasswordRequest;
 import com.littlepig.controller.request.UserUpdateRequest;
@@ -9,17 +8,17 @@ import com.littlepig.controller.response.UserResponse;
 import com.littlepig.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -28,6 +27,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j(topic = "USER-CONTROLLER")
 @ToString
+@Validated
 public class UserController {
     private final UserService userService;
     @Operation(summary = "Get user list", description = "API retrieve user from db")
@@ -38,27 +38,6 @@ public class UserController {
                                       @RequestParam(defaultValue = "20") int pageSize){
             log.info("Get user list");
             UserPageResponse userPageResponse = userService.findAll(keyword, sort, page, pageSize);
-//           UserResponse userResponse = UserResponse.builder()
-//                   .id(1L)
-//                   .firstName("tuan")
-//                   .lastName("nguyen")
-//                   .userName("tuan010")
-//                   .gender(Gender.MALE)
-//                   .birthday(new Date())
-//                   .email("tuan888@dd.com")
-//                   .phone("098765522")
-//                   .build();
-//           UserResponse userResponse1 = UserResponse.builder()
-//                   .id(2L)
-//                   .firstName("trong")
-//                   .lastName("vu")
-//                   .userName("vdtdsds333")
-//                   .gender(Gender.MALE)
-//                   .birthday(new Date())
-//                   .email("trong3133@dd.com")
-//                   .phone("098765522323")
-//                   .build();
-//            List<UserResponse> userList = List.of(userResponse1, userResponse);
             Map<String, Object> response = new LinkedHashMap<>();
             response.put("status", HttpStatus.OK.value());
             response.put("message", "user list");
@@ -69,19 +48,10 @@ public class UserController {
     }
     @Operation(summary = "Get user detail", description = "API retrieve user detail by id")
     @GetMapping("/{userId}")
-    public Map<String, Object> getUserDetailById(@PathVariable("userId") Long userId){
+    public Map<String, Object> getUserDetailById(@PathVariable("userId") @Min(value = 1, message = "userId must be equals or greater than 1") Long userId){
         log.info("Get user detail : {}", userId);
             UserResponse  userResponse =  userService.findById(userId);
-//        UserResponse userResponse = UserResponse.builder()
-//                .id(1L)
-//                .firstName("tuan")
-//                .lastName("nguyen")
-//                .userName("tuan010")
-//                .gender("male")
-//                .birthday(new Date())
-//                .email("tuan888@dd.com")
-//                .phone("098765522")
-//                .build();
+
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("status", HttpStatus.OK.value());
         response.put("message", "user list");
@@ -91,10 +61,8 @@ public class UserController {
 
     @Operation(summary = "Create user", description = "API add new user to db")
     @PostMapping("/add")
-    public ResponseEntity<?> createUser(@RequestBody UserCreationRequest request){
+    public ResponseEntity<?> createUser(@RequestBody @Valid UserCreationRequest request){
             log.info("Create user: {}", request);
-//        userService.save(request);
-
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("status", HttpStatus.CREATED.value());
         response.put("message", "user created successfully");
@@ -106,7 +74,7 @@ public class UserController {
 
     @Operation(summary = "Update user", description = "API update an user to db")
     @PutMapping("/update")
-    public Map<String, Object> updateUser(@RequestBody UserUpdateRequest request){
+    public Map<String, Object> updateUser(@RequestBody @Valid UserUpdateRequest request){
         log.info("Update user: {}", request);
         userService.update(request);
         //get user after update
@@ -121,7 +89,7 @@ public class UserController {
 
     @Operation(summary = "Update user password", description = "API update password an user to db")
     @PatchMapping("/change-pwd")
-    public Map<String, Object> changePassword(@RequestBody UserPasswordRequest request){
+    public Map<String, Object> changePassword(@RequestBody @Valid UserPasswordRequest request){
         log.info("Change password for user: {}", request);
 
         userService.changePassword(request);
@@ -136,7 +104,7 @@ public class UserController {
 
     @Operation(summary = "Inactivate user", description = "API inactivate user in database")
     @DeleteMapping("/del/{userId}")
-    public Map<String, Object> deleteUser(@PathVariable Long userId){
+    public Map<String, Object> deleteUser(@PathVariable @Min(value = 1, message = "id must be greater than or equals than 1") Long userId){
         log.info("Deleting user: {}", userId);
 
         userService.delete(userId);

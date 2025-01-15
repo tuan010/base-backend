@@ -6,6 +6,7 @@ import com.littlepig.controller.request.UserPasswordRequest;
 import com.littlepig.controller.request.UserUpdateRequest;
 import com.littlepig.controller.response.UserPageResponse;
 import com.littlepig.controller.response.UserResponse;
+import com.littlepig.exception.InvalidDataException;
 import com.littlepig.exception.ResourceNotFoundException;
 import com.littlepig.model.AddressEntity;
 import com.littlepig.model.UserEntity;
@@ -141,6 +142,12 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public Long save(UserCreationRequest request) {
         log.info("Saving user: {}", request);
+
+        UserEntity existingUser = userRepository.findByEmail(request.getEmail());
+        if (existingUser != null){
+            throw new InvalidDataException("Email already exist. Please try again!");
+        }
+
         UserEntity user = UserEntity.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
