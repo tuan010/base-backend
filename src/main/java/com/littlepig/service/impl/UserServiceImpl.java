@@ -12,6 +12,7 @@ import com.littlepig.model.AddressEntity;
 import com.littlepig.model.UserEntity;
 import com.littlepig.repository.AddressRepository;
 import com.littlepig.repository.UserRepository;
+import com.littlepig.service.EmailService;
 import com.littlepig.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -36,6 +38,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     @Override
     public UserPageResponse findAll(String keyword, String sort, int page, int size) {
@@ -183,6 +186,14 @@ public class UserServiceImpl implements UserService {
             log.info("Saving addresses: {}", addresses);
             addressRepository.saveAll(addresses);
         }
+
+        //send email
+        try {
+            emailService.emailVerification(request.getEmail(), request.getUserName());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         return user.getId();
 
     }

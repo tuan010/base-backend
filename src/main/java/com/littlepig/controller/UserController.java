@@ -8,6 +8,7 @@ import com.littlepig.controller.response.UserResponse;
 import com.littlepig.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -115,5 +117,18 @@ public class UserController {
         response.put("data", "");
 
         return response;
+    }
+
+    @GetMapping("/confirm-email")
+    public void confirmEmail(String secretCode, HttpServletResponse response) throws IOException {
+        log.info("Confirm email: {}", secretCode);
+        try {
+            // TODO check or compare secretCode from database
+        } catch (Exception e) {
+            log.error("Email confirm was failure, error: {}", e.getMessage());
+            throw new RuntimeException(e);
+        } finally {
+            response.sendRedirect("https://tayjava.vn/wp-admin");
+        }
     }
 }

@@ -17,8 +17,10 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
   sendgrid:
-    api-key: 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
-    from-email: tuanzebe21895@gmail.com
+    api-key: ${SEND_GRID_API_KEY}
+    from-email: tuan21895@gmail.com
+    template-id: d-694f86ed8b0344f09dbb5c5a9dff7b73
+    verification-link: http://localhost:8080/user/confirm-email
 
 # application-dev.yml
 springdoc:

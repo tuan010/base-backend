@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j(topic = "EmailController")
@@ -19,5 +21,11 @@ public class EmailController {
         log.info("Sending email to {}", to);
         emailService.send(to, subject, content);
         log.info("Email sent");
+    }
+
+    @GetMapping("/verify-email")
+    public void emailVerification(@RequestParam String to, @RequestParam String name) throws IOException {
+        log.info("Verification email to {}", to);
+        emailService.emailVerification(to, name);
     }
 }
