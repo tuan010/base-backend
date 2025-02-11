@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
                         .lastName(entity.getLastName())
                         .gender(entity.getGender())
                         .birthday(entity.getBirthday())
-                        .userName(entity.getUserName())
+                        .userName(entity.getUsername())
                         .phone(entity.getPhone())
                         .email(entity.getEmail())
                         .build()
@@ -158,7 +158,7 @@ public class UserServiceImpl implements UserService {
                 .birthday(request.getBirthday())
                 .email(request.getEmail())
                 .phone(request.getPhone())
-                .userName(request.getUserName())
+                .username(request.getUserName())
                 .type(request.getType())
                 .status(UserStatus.NONE)
                 .password("bypassForPassword")
@@ -219,7 +219,7 @@ public class UserServiceImpl implements UserService {
         // set data
         userEntity.setFirstName(request.getFirstName());
         userEntity.setLastName(request.getLastName());
-        userEntity.setUserName(request.getUserName());
+        userEntity.setUsername(request.getUserName());
         userEntity.setGender(request.getGender());
         userEntity.setBirthday(request.getBirthday());
         userEntity.setEmail(request.getEmail());
