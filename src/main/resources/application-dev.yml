@@ -37,3 +37,7 @@ openapi:
 
 jwt:
   secretKey: abc@123
+  expiryMin: 5
+  expiryDay: 5
+  accessKey: DlAx4tPTWXZJPgYJ0OWsVGo1FjelNvVWT/IVUGJOL+c=
+  refreshKey: fNMpxz+AInWX9eZ0+rGQ53vPbXrvwf5I6NJ4p+F1HJM=
