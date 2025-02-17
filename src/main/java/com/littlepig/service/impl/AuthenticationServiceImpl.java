@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,8 +38,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new AccessDeniedException(e.getMessage());
         }
         //login xong thi lay thong tin user
+        // su dung ben var de luc chay ko bi loi
         var user = userRepository.findByUsername(request.getUsername());
-
+        if(user == null){
+            throw new UsernameNotFoundException("User not found");
+        }
 
         String accessToken = jwtService.generateAccessToken(user.getId(), request.getUsername(), user.getAuthorities());
         String refreshToken = jwtService.generateRefreshToken(user.getId(), request.getUsername(), user.getAuthorities());

@@ -161,7 +161,7 @@ public class UserServiceImpl implements UserService {
                 .username(request.getUserName())
                 .type(request.getType())
                 .status(UserStatus.NONE)
-                .password("bypassForPassword")
+                .password(passwordEncoder.encode(request.getPassword()))
                 .build();
         userRepository.save(user);
         log.info("User saved: {}", user);

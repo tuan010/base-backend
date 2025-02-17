@@ -74,7 +74,7 @@ public class JWTServiceImpl implements JWTService {
 
     private Claims extractAllClaims(TokenType type, String token) {
         try {
-            return Jwts.parser().setSigningKey(accessKey).parseClaimsJwt(token).getBody();
+            return Jwts.parser().setSigningKey(accessKey).parseClaimsJws(token).getBody();
         } catch (SignatureException | ExpiredJwtException e) {
             throw new AccessDeniedException("Access denied!, error: "+e.getMessage());
         }
